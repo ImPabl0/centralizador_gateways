@@ -394,7 +394,7 @@ router.post(
       console.log("🔔 Webhook PayEvo recebido");
 
       // Parse do payload
-      const payload = JSON.parse(req.body.toString());
+      const payload = req.body;
       console.log("📄 Payload webhook PayEvo:", payload);
 
       // Aqui você pode adicionar validação de assinatura se necessário

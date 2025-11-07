@@ -248,7 +248,7 @@ export function getDefaultCustomer(): Customer {
     email: "cliente@exemplo.com",
     phone: "11999999999",
     document: {
-      number: "12345678901",
+      number: "18189922050",
       type: "cpf",
     },
   };

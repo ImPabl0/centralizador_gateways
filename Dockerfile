@@ -1,8 +1,8 @@
-# Use Node.js 18 LTS como base
+# Use Node.js 20 LTS como base
 FROM node:20-slim AS base
 
 # Instala dependências necessárias para compilação nativa
-RUN apk add --no-cache dumb-init
+RUN apt-get update && apt-get install -y --no-install-recommends dumb-init && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Cria diretório da aplicação
 WORKDIR /app
@@ -32,8 +32,8 @@ ENV NODE_ENV=production
 ENV PORT=5000
 
 # Cria usuário não-root
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+RUN groupadd -g 1001 nodejs
+RUN useradd -r -u 1001 -g nodejs nodejs
 
 # Copia apenas arquivos necessários para produção
 COPY package*.json ./

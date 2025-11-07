@@ -16,16 +16,43 @@ API para centralizar múltiplos gateways de pagamento PIX, fornecendo uma interf
 
 ## 📋 Pré-requisitos
 
+### Execução Local
 - Node.js 16+ 
 - npm ou yarn
 
+### Docker (Recomendado)
+- Docker 20.10+
+- Docker Compose 2.0+
+- Make (opcional)
+
 ## ⚡ Instalação e execução
+
+### 🐳 Com Docker (Recomendado)
+
+```bash
+# Copiar configuração
+cp .env.docker .env
+
+# Desenvolvimento
+make dev
+# ou
+docker-compose -f docker-compose.dev.yml up --build
+
+# Produção
+make prod
+# ou
+docker-compose up --build -d
+```
+
+Ver documentação completa: [Docker Setup](docs/DOCKER.md)
+
+### 💻 Execução Local
 
 ```bash
 # Instalar dependências
 npm install
 
-# Copiar arquivo de configuração
+# Copiar arquivo de configuração  
 copy .env.example .env
 
 # Executar em modo desenvolvimento

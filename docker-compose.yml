@@ -34,3 +34,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # Demo frontend
+  demo:
+    build:
+      context: ./demo
+      dockerfile: Dockerfile
+    container_name: centralizador-demo
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://soupablo.dev/gateways
+    depends_on:
+      - app

@@ -11,7 +11,10 @@ API para centralizar múltiplos gateways de pagamento PIX, fornecendo uma interf
 - **Suporte a múltiplos gateways**: PayEvo, BlackCat (facilmente extensível)
 - **Server-Sent Events (SSE)**: Notificações em tempo real sobre mudanças de status
 - **Webhooks**: Recebe e processa callbacks dos gateways automaticamente
-- **Dashboard de Testes**: Interface web para teste das funcionalidades SSE## 📋 Pré-requisitos
+- **Dashboard de Testes**: Interface web para teste das funcionalidades SSE
+- **Customer Opcional**: Campo customer é opcional, usa dados padrão quando omitido
+
+## 📋 Pré-requisitos
 
 - Node.js 16+ 
 - npm ou yarn
@@ -58,6 +61,7 @@ Cria uma nova cobrança PIX
             "type": "cpf"
         }
     }
+    // ✨ Customer é OPCIONAL! Se omitido, usa dados padrão
 }
 ```
 
@@ -203,6 +207,10 @@ class NovoGateway extends BaseGateway {
   }
 }
 ```
+
+## Documentação Postman
+
+Acesse [aqui](https://www.postman.com/bold-firefly-904906/workspace/paymentgateways/collection/42241516-86b28aad-ec23-417a-97de-de92a15c27d3?action=share&creator=42241516&active-environment=42241516-e84a57a7-ff94-4956-b83a-b7b67b0db079)
 
 ## 🐛 Logs e Debug
 

@@ -6,6 +6,7 @@ import {
   PaymentResponse,
   StoredPayment,
   PaymentStatus,
+  getDefaultCustomer,
 } from "../types";
 import BaseGateway from "./gateways/BaseGateway";
 
@@ -45,6 +46,7 @@ class PaymentGatewayService {
 
         const result = await gateway.createPixPayment({
           ...paymentData,
+          customer: paymentData.customer || getDefaultCustomer(),
           id: paymentId,
           expirationDate,
         });

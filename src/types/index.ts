@@ -21,7 +21,7 @@ export interface PaymentRequest {
   currency: "BRL";
   amount: number;
   items: PaymentItem[];
-  customer: Customer;
+  customer?: Customer;
 }
 
 export interface PaymentResponse {
@@ -40,9 +40,10 @@ export interface GatewayPaymentStatus {
   gatewayPaymentId: string;
 }
 
-export interface GatewayPaymentData extends PaymentRequest {
+export interface GatewayPaymentData extends Omit<PaymentRequest, "customer"> {
   id: string;
   expirationDate: Date;
+  customer: Customer; // Sempre obrigatório internamente
 }
 
 export interface GatewayPaymentResult {
@@ -215,7 +216,7 @@ export interface TransactionRequest {
   paymentMethod: "pix";
   pix: TransactionPix;
   items: TransactionItem[];
-  customer: CustomerTransaction;
+  customer?: CustomerTransaction;
 }
 
 export interface BlackCatPaymentRequest {
@@ -238,4 +239,17 @@ export interface BlackCatTransactionResponse {
   id: number;
   status: "pending" | "paid" | "refunded" | "refused";
   pix: BlackCatPixResponse;
+}
+
+// Utility function to create default customer
+export function getDefaultCustomer(): Customer {
+  return {
+    name: "Cliente Padrão",
+    email: "cliente@exemplo.com",
+    phone: "11999999999",
+    document: {
+      number: "12345678901",
+      type: "cpf",
+    },
+  };
 }

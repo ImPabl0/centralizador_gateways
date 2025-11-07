@@ -11,12 +11,38 @@ interface PaymentRequestBody extends Request {
   body: PaymentRequest;
 }
 
+// Schema para validação PIX geral
+const pixPaymentSchema = Joi.object({
+  currency: Joi.string().valid("BRL").required(),
+  amount: Joi.number().min(0.01).required(),
+  items: Joi.array()
+    .items(
+      Joi.object({
+        title: Joi.string().required(),
+        unitPrice: Joi.number().min(0.01).required(),
+        quantity: Joi.number().integer().min(1).required(),
+        tangible: Joi.boolean().optional(),
+      })
+    )
+    .min(1)
+    .required(),
+  customer: Joi.object({
+    name: Joi.string().min(2).max(100).required(),
+    email: Joi.string().email().required(),
+    phone: Joi.string().min(10).max(15).optional(),
+    document: Joi.object({
+      number: Joi.string().min(11).max(14).required(),
+      type: Joi.string().valid("cpf", "cnpj", "global").required(),
+    }).required(),
+  }).optional(), // Customer é opcional
+});
+
 export const validatePixPayment = (
   req: PaymentRequestBody,
   res: Response,
   next: NextFunction
 ): void => {
-  const { error, value } = transactionSchema.validate(req.body, {
+  const { error, value } = pixPaymentSchema.validate(req.body, {
     abortEarly: false,
     stripUnknown: true,
   });
@@ -79,7 +105,7 @@ const transactionSchema = Joi.object({
       number: Joi.string().min(11).max(14).required(),
       type: Joi.string().valid("CPF", "CNPJ").required(),
     }).required(),
-  }).required(),
+  }).optional(),
   pix: Joi.object({
     expiresInDays: Joi.number().integer().min(1).max(30).required(),
   }).required(),

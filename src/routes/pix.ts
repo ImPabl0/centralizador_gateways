@@ -13,6 +13,7 @@ import {
   PaymentResponse,
   BlackCatPaymentRequest,
   TransactionRequest,
+  getDefaultCustomer,
 } from "../types";
 
 const router: Router = express.Router();
@@ -40,7 +41,7 @@ router.post(
       const paymentData: PaymentRequest = req.body;
 
       console.log("📥 Nova solicitação PIX recebida:", {
-        customer: paymentData.customer.name,
+        customer: paymentData.customer?.name || "Cliente Padrão",
         amount: paymentData.amount,
         currency: paymentData.currency,
       });
@@ -110,10 +111,10 @@ router.post(
   validatePayEvoPayment,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const transactionData = req.body as BlackCatPaymentRequest;
+      const transactionData = req.body as TransactionRequest;
 
       console.log("📥 Nova transação PayEvo específica recebida:", {
-        customer: transactionData.customer.name,
+        customer: transactionData.customer?.name || "Cliente Padrão",
         amount: transactionData.amount,
         paymentMethod: transactionData.paymentMethod,
       });
@@ -128,16 +129,7 @@ router.post(
           quantity: item.quantity,
           tangible: false,
         })),
-        customer: {
-          name: transactionData.customer.name,
-          email: transactionData.customer.email,
-          document: {
-            number: transactionData.customer.document.number,
-            type: transactionData.customer.document.type.toLowerCase() as
-              | "cpf"
-              | "cnpj",
-          },
-        },
+        customer: transactionData.customer || getDefaultCustomer(),
         id: `pv_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
         expirationDate: new Date(
           Date.now() + transactionData.pix.expiresInDays * 24 * 60 * 60 * 1000
@@ -176,7 +168,7 @@ router.post(
       const transactionData = req.body as TransactionRequest;
 
       console.log("📥 Nova transação BlackCat específica recebida:", {
-        customer: transactionData.customer.name,
+        customer: transactionData.customer?.name || "Cliente Padrão",
         amount: transactionData.amount,
         paymentMethod: transactionData.paymentMethod,
       });
@@ -191,14 +183,7 @@ router.post(
           quantity: item.quantity,
           tangible: item.tangible,
         })),
-        customer: {
-          name: transactionData.customer.name,
-          email: transactionData.customer.email,
-          document: {
-            number: transactionData.customer.document.number,
-            type: transactionData.customer.document.type as "cpf" | "cnpj",
-          },
-        },
+        customer: transactionData.customer || getDefaultCustomer(),
         id: `bc_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
         expirationDate: new Date(
           Date.now() + transactionData.pix.expiresInDays * 24 * 60 * 60 * 1000

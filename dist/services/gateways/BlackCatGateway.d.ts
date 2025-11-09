@@ -1,5 +1,5 @@
 import BaseGateway from "./BaseGateway";
-import { GatewayConfig, GatewayPaymentData, GatewayPaymentResult } from "../../types";
+import { GatewayConfig, GatewayPaymentData, GatewayPaymentResult, GatewayPaymentStatus } from "../../types";
 declare class BlackCatGateway extends BaseGateway {
     private publicKey;
     private secretKey;
@@ -9,11 +9,7 @@ declare class BlackCatGateway extends BaseGateway {
     private convertToBlackCatFormat;
     private mapBlackCatStatusToStandard;
     createPixPayment(paymentData: GatewayPaymentData): Promise<GatewayPaymentResult>;
-    getPaymentStatus(paymentId: string): Promise<{
-        status: string;
-        gateway: string;
-        gatewayPaymentId: string;
-    }>;
+    getPaymentStatus(paymentId: string): Promise<GatewayPaymentStatus>;
 }
 export default BlackCatGateway;
 //# sourceMappingURL=BlackCatGateway.d.ts.map

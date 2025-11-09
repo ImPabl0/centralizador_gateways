@@ -19,7 +19,9 @@ class PayEvoGateway extends BaseGateway_1.default {
         return !!this.apiKey && !!this.config.apiUrl;
     }
     convertToPayEvoFormat(paymentData) {
+        const currentDomain = process.env.CURRENT_DOMAIN || "http://localhost:5000";
         return {
+            postbackUrl: `${currentDomain}/pix/webhook/payevo`,
             items: paymentData.items.map((item) => ({
                 title: item.title,
                 unitPrice: item.unitPrice,
@@ -66,7 +68,7 @@ class PayEvoGateway extends BaseGateway_1.default {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${Buffer.from(this.apiKey).toString("base64")}`,
+                    Authorization: `Basic ${Buffer.from(this.apiKey).toString("base64")}`,
                 },
                 body: JSON.stringify(payEvoRequest),
             });
@@ -98,7 +100,7 @@ class PayEvoGateway extends BaseGateway_1.default {
             const response = await fetch(`${this.config.apiUrl}functions/v1/transactions/${paymentId}`, {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${new Buffer(this.apiKey).toString("base64")}`,
+                    Authorization: `Basic ${Buffer.from(this.apiKey).toString("base64")}`,
                     "Content-Type": "application/json",
                 },
             });
@@ -110,9 +112,10 @@ class PayEvoGateway extends BaseGateway_1.default {
             const status = this.mapPayEvoStatusToStandard(payEvoResponse.status);
             console.log(`📄 ${this.name}: Status obtido - ${payEvoResponse.status} -> ${status}`);
             return {
-                status,
+                status: status,
                 gateway: this.name,
                 gatewayPaymentId: payEvoResponse.id,
+                qrcode: payEvoResponse.pix.qrcode,
             };
         }
         catch (error) {

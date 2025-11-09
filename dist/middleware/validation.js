@@ -5,8 +5,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateBlackCatPayment = exports.validatePayEvoPayment = exports.validatePixPayment = void 0;
 const joi_1 = __importDefault(require("joi"));
+const pixPaymentSchema = joi_1.default.object({
+    currency: joi_1.default.string().valid("BRL").required(),
+    amount: joi_1.default.number().min(0.01).required(),
+    items: joi_1.default.array()
+        .items(joi_1.default.object({
+        title: joi_1.default.string().required(),
+        unitPrice: joi_1.default.number().min(0.01).required(),
+        quantity: joi_1.default.number().integer().min(1).required(),
+        tangible: joi_1.default.boolean().optional(),
+    }))
+        .min(1)
+        .required(),
+    customer: joi_1.default.object({
+        name: joi_1.default.string().min(2).max(100).required(),
+        email: joi_1.default.string().email().required(),
+        phone: joi_1.default.string().min(10).max(15).optional(),
+        document: joi_1.default.object({
+            number: joi_1.default.string().min(11).max(14).required(),
+            type: joi_1.default.string().valid("cpf", "cnpj", "global").required(),
+        }).required(),
+    }).optional(),
+});
 const validatePixPayment = (req, res, next) => {
-    const { error, value } = transactionSchema.validate(req.body, {
+    const { error, value } = pixPaymentSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true,
     });
@@ -55,7 +77,7 @@ const transactionSchema = joi_1.default.object({
             number: joi_1.default.string().min(11).max(14).required(),
             type: joi_1.default.string().valid("CPF", "CNPJ").required(),
         }).required(),
-    }).required(),
+    }).optional(),
     pix: joi_1.default.object({
         expiresInDays: joi_1.default.number().integer().min(1).max(30).required(),
     }).required(),

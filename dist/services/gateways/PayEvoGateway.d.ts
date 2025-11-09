@@ -1,5 +1,5 @@
 import BaseGateway from "./BaseGateway";
-import { GatewayConfig, GatewayPaymentData, GatewayPaymentResult } from "../../types";
+import { GatewayConfig, GatewayPaymentData, GatewayPaymentResult, GatewayPaymentStatus } from "../../types";
 declare class PayEvoGateway extends BaseGateway {
     private apiKey;
     constructor(config?: GatewayConfig);
@@ -7,11 +7,7 @@ declare class PayEvoGateway extends BaseGateway {
     private convertToPayEvoFormat;
     private mapPayEvoStatusToStandard;
     createPixPayment(paymentData: GatewayPaymentData): Promise<GatewayPaymentResult>;
-    getPaymentStatus(paymentId: string): Promise<{
-        status: string;
-        gateway: string;
-        gatewayPaymentId: string;
-    }>;
+    getPaymentStatus(paymentId: string): Promise<GatewayPaymentStatus>;
 }
 export default PayEvoGateway;
 //# sourceMappingURL=PayEvoGateway.d.ts.map

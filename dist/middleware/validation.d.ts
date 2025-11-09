@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PaymentRequest, PayEvoTransactionRequest, TranscationRequest } from "../types";
+import { PaymentRequest, PayEvoTransactionRequest, BlackCatPaymentRequest } from "../types";
 interface PaymentRequestBody extends Request {
     body: PaymentRequest;
 }
@@ -9,7 +9,7 @@ interface PayEvoRequestBody extends Request {
 }
 export declare const validatePayEvoPayment: (req: PayEvoRequestBody, res: Response, next: NextFunction) => void;
 interface BlackCatRequestBody extends Request {
-    body: TranscationRequest;
+    body: BlackCatPaymentRequest;
 }
 export declare const validateBlackCatPayment: (req: BlackCatRequestBody, res: Response, next: NextFunction) => void;
 export {};

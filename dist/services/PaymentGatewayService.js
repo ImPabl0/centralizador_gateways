@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
 const PayEvoGateway_1 = __importDefault(require("./gateways/PayEvoGateway"));
 const BlackCatGateway_1 = __importDefault(require("./gateways/BlackCatGateway"));
+const types_1 = require("../types");
 class PaymentGatewayService {
     constructor() {
         this.gateways = [new PayEvoGateway_1.default(), new BlackCatGateway_1.default()];
@@ -25,6 +26,7 @@ class PaymentGatewayService {
                 }
                 const result = await gateway.createPixPayment({
                     ...paymentData,
+                    customer: paymentData.customer || (0, types_1.getDefaultCustomer)(),
                     id: paymentId,
                     expirationDate,
                 });

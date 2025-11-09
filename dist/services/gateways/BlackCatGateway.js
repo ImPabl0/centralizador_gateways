@@ -4,15 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const BaseGateway_1 = __importDefault(require("./BaseGateway"));
+const dotenv_1 = require("dotenv");
 class BlackCatGateway extends BaseGateway_1.default {
     constructor(config = {}) {
         super("BlackCat", {
-            apiUrl: "https://api.blackcat.com.br/",
+            apiUrl: "https://api.blackcatpagamentos.com/",
             enabled: true,
             ...config,
         });
-        this.publicKey = config.publicKey || process.env.BLACKCAT_PUBLIC_KEY;
-        this.secretKey = config.secretKey || process.env.BLACKCAT_SECRET_KEY;
+        (0, dotenv_1.configDotenv)();
+        this.publicKey = process.env.BLACKCAT_PUBLIC_KEY;
+        this.secretKey = process.env.BLACKCAT_SECRET_KEY;
     }
     healthCheck() {
         return !!(this.publicKey && this.secretKey);
@@ -26,7 +28,9 @@ class BlackCatGateway extends BaseGateway_1.default {
         };
     }
     convertToBlackCatFormat(paymentData) {
+        const currentDomain = process.env.CURRENT_DOMAIN || "http://localhost:5000";
         return {
+            postbackUrl: `${currentDomain}/pix/webhook/blackcat`,
             amount: paymentData.amount,
             currency: "BRL",
             paymentMethod: "pix",
@@ -37,7 +41,7 @@ class BlackCatGateway extends BaseGateway_1.default {
                 title: item.title,
                 unitPrice: item.unitPrice,
                 quantity: item.quantity,
-                tangible: item.tangible,
+                tangible: item.tangible || false,
                 externalRef: `ITEM_${Date.now()}_${Math.random()
                     .toString(36)
                     .substring(2, 8)}`,
@@ -47,7 +51,7 @@ class BlackCatGateway extends BaseGateway_1.default {
                 email: paymentData.customer.email,
                 document: {
                     number: paymentData.customer.document.number,
-                    type: paymentData.customer.document.type,
+                    type: paymentData.customer.document.type.toLocaleLowerCase(),
                 },
             },
         };
@@ -117,9 +121,10 @@ class BlackCatGateway extends BaseGateway_1.default {
             const status = this.mapBlackCatStatusToStandard(blackCatResponse.status);
             console.log(`✅ ${this.name}: Status consultado - ${blackCatResponse.status} -> ${status}`);
             return {
-                status,
+                status: status,
                 gateway: this.name,
                 gatewayPaymentId: blackCatResponse.id.toString(),
+                qrcode: blackCatResponse.pix.qrcode,
             };
         }
         catch (error) {

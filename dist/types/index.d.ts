@@ -18,7 +18,7 @@ export interface PaymentRequest {
     currency: "BRL";
     amount: number;
     items: PaymentItem[];
-    customer: Customer;
+    customer?: Customer;
 }
 export interface PaymentResponse {
     qrcode: string;
@@ -27,9 +27,16 @@ export interface PaymentResponse {
     status: PaymentStatus;
 }
 export type PaymentStatus = "PENDING" | "APPROVED" | "EXPIRED";
-export interface GatewayPaymentData extends PaymentRequest {
+export interface GatewayPaymentStatus {
+    status: PaymentStatus;
+    gateway: string;
+    qrcode?: string;
+    gatewayPaymentId: string;
+}
+export interface GatewayPaymentData extends Omit<PaymentRequest, "customer"> {
     id: string;
     expirationDate: Date;
+    customer: Customer;
 }
 export interface GatewayPaymentResult {
     qrcode: string;
@@ -80,6 +87,7 @@ export interface PayEvoPix {
     expiresInDays: number;
 }
 export interface PayEvoTransactionRequest {
+    postbackUrl: string;
     items: PayEvoItem[];
     customer: PayEvoCustomer;
     paymentMethod: "PIX";
@@ -167,21 +175,31 @@ export interface BlackCatCustomerDocument {
     number: string;
     type: "cpf" | "cnpj";
 }
-export interface BlackCatCustomer {
+export interface CustomerTransaction {
     name: string;
     email: string;
     document: BlackCatCustomerDocument;
 }
-export interface BlackCatPix {
+export interface TransactionPix {
     expiresInDays: number;
 }
-export interface TranscationRequest {
+export interface TransactionRequest {
+    postbackUrl?: string;
     amount: number;
     currency: "BRL";
     paymentMethod: "pix";
-    pix: BlackCatPix;
+    pix: TransactionPix;
     items: TransactionItem[];
-    customer: BlackCatCustomer;
+    customer?: CustomerTransaction;
+}
+export interface BlackCatPaymentRequest {
+    postbackUrl?: string;
+    amount: number;
+    currency: "BRL";
+    paymentMethod: "pix";
+    pix: TransactionPix;
+    items: TransactionItem[];
+    customer: CustomerTransaction;
 }
 export interface BlackCatPixResponse {
     qrcode: string;
@@ -194,4 +212,5 @@ export interface BlackCatTransactionResponse {
     status: "pending" | "paid" | "refunded" | "refused";
     pix: BlackCatPixResponse;
 }
+export declare function getDefaultCustomer(): Customer;
 //# sourceMappingURL=index.d.ts.map

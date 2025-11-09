@@ -403,7 +403,10 @@ router.post(
       // Extrai informações do pagamento
       const paymentId =
         payload.id || payload.transaction_id || payload.payment_id;
-      const status = payload.status || payload.payment_status;
+      let status = (payload.status || payload.payment_status) as string;
+      if (status.toLowerCase() === "paid") {
+        status = "approved";
+      }
 
       if (!paymentId) {
         console.warn("⚠️ Webhook PayEvo sem ID de pagamento");

@@ -112,7 +112,11 @@ const PixQRCode: React.FC<PixQRCodeProps> = ({
           payload.data &&
           payload.data.status
         ) {
-          setPaymentStatus(payload.data.status);
+          let currentStatus = "Aguardando pagamento";
+          if (payload.data.status.toLowerCase() === "waiting_payment") {
+            currentStatus = "Aguardando pagamento";
+          }
+          setPaymentStatus(currentStatus);
 
           const status = String(payload.data.status).toUpperCase();
           if (

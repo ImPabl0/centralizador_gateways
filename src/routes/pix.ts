@@ -441,7 +441,7 @@ router.post(
       console.log("🔔 Webhook BlackCat recebido");
 
       // Parse do payload
-      const payload = JSON.parse(req.body.toString());
+      const payload = req.body;
       console.log("📄 Payload webhook BlackCat:", payload);
 
       // Aqui você pode adicionar validação de assinatura se necessário
